@@ -1,0 +1,11 @@
+{
+  "files.associations": {
+    "*.h": "c",
+    "*.proto": "proto3",
+    "array": "c",
+    "string_view": "c",
+    "initializer_list": "c",
+    "utility": "c",
+    "system_error": "c"
+  }
+}

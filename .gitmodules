@@ -1,0 +1,6 @@
+[submodule "vendor/cJSON"]
+	path = vendor/cJSON
+	url = https://github.com/DaveGamble/cJSON
+[submodule "vendor/telegram-bot-api-spec"]
+	path = vendor/telegram-bot-api-spec
+	url = https://github.com/PaulSonOfLars/telegram-bot-api-spec
