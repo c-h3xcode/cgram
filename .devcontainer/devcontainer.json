@@ -10,12 +10,9 @@
             "fisher": true
         },
         "ghcr.io/devcontainers/features/python:1": {
-            "installTools": true,
-            "version": "latest"
+            "installTools": true
         },
-        "ghcr.io/devcontainers-contrib/features/poetry:2": {
-            "version": "latest"
-        }
+        "ghcr.io/devcontainers-contrib/features/poetry:2": {}
     }
     // Features to add to the dev container. More info: https://containers.dev/features.
     // "features": {},

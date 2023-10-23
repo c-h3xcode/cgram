@@ -1,14 +1,23 @@
 FROM mcr.microsoft.com/devcontainers/cpp:1-ubuntu-20.04
 
 ARG REINSTALL_CMAKE_VERSION_FROM_SOURCE="3.22.2"
+ARG LLVM_VERSION="17"
 
 # Optionally install the cmake for vcpkg
 COPY ./reinstall-cmake.sh /tmp/
 
 RUN if [ "${REINSTALL_CMAKE_VERSION_FROM_SOURCE}" != "none" ]; then \
-        chmod +x /tmp/reinstall-cmake.sh && /tmp/reinstall-cmake.sh ${REINSTALL_CMAKE_VERSION_FROM_SOURCE}; \
+    chmod +x /tmp/reinstall-cmake.sh && /tmp/reinstall-cmake.sh ${REINSTALL_CMAKE_VERSION_FROM_SOURCE}; \
     fi \
     && rm -f /tmp/reinstall-cmake.sh
+
+# Install LLVM
+COPY ./install-llvm.sh /tmp/
+
+RUN if [ "${LLVM_VERSION}" != "none" ]; then \
+    chmod +x /tmp/install-llvm.sh && /tmp/install-llvm.sh ${LLVM_VERSION}; \
+    fi \
+    && rm -f /tmp/install-llvm.sh
 
 # [Optional] Uncomment this section to install additional vcpkg ports.
 # RUN su vscode -c "${VCPKG_ROOT}/vcpkg install <your-port-name-here>"
