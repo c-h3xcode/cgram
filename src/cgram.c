@@ -55,7 +55,7 @@ cgram_error_t cgram_sendMessage(cgram_handle_t *handle, int64_t chat_id,
   return 0;
 }
 
-cgram_User_t *cgram_getMe(cgram_handle_t *handle) {
+result(User) * cgram_getMe(cgram_handle_t *handle) {
   struct _cgram_params params;
   _cgram_params_init(&params);
 
@@ -64,10 +64,20 @@ cgram_User_t *cgram_getMe(cgram_handle_t *handle) {
 
   _cgram_params_free(&params);
 
-  if (!response.ok) {
-    return NULL;
-  }
+  result(User) *result = malloc(sizeof(result(User)));
+  result->ok = false;
+  result->description = response.description;
+  result->result = NULL;
 
-  cgram_User_t *user = cgram_User_parse(response.result);
-  return user;
+  if (!response.ok) goto end;
+
+  type(User) *user = cgram_User_parse(response.result);
+
+  if (user == NULL) goto end;
+
+  result->ok = true;
+  result->result = user;
+
+end:
+  return result;
 }

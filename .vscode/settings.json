@@ -7,5 +7,9 @@
     "initializer_list": "c",
     "utility": "c",
     "system_error": "c"
-  }
+  },
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "python.formatting.provider": "none"
 }

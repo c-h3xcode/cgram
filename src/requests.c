@@ -15,6 +15,7 @@ _cgram_request_response_t _cgram_make_request(cgram_handle_t* handle,
 
   result.ok = false;
   result.result = NULL;
+  result.description = NULL;
 
   if (!cJSON_IsObject(parsed_response)) {
     goto end;
@@ -29,6 +30,12 @@ _cgram_request_response_t _cgram_make_request(cgram_handle_t* handle,
       cJSON_GetObjectItemCaseSensitive(parsed_response, "result");
   if (cJSON_IsObject(result_item)) {
     result.result = result_item;
+  }
+
+  cJSON* description =
+      cJSON_GetObjectItemCaseSensitive(parsed_response, "description");
+  if (cJSON_IsString(description)) {
+    result.description = description->valuestring;
   }
 
 end:

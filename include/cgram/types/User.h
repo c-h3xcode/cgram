@@ -4,6 +4,7 @@
 #include <cJSON.h>
 #include <stdbool.h>
 #include <stdint.h>
+
 #include "common.h"
 
 newtype(User) {
@@ -19,12 +20,12 @@ newtype(User) {
   bool can_read_all_group_messages;
   bool supports_inline_queries;
 };
+result_def(User);
 
+type(User) * cgram_User_parse(cJSON *json);
 
-type(User) *cgram_User_parse(cJSON *json);
+cJSON *cgram_User_to_json(type(User) * user);
 
-cJSON *cgram_User_to_json(type(User) *user);
-
-void cgram_User_free(type(User) *user);
+void cgram_User_free(type(User) * user);
 
 #endif

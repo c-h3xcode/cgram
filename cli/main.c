@@ -14,12 +14,12 @@ int main(int argc, char **argv) {
   }
 
   result(User) *result = cgram_getMe(handle);
-  if (user == NULL) {
+  if (result == NULL) {
     printf("Error getting user\n");
     return 1;
   }
 
-  type(User) *user = unwrap(User) {
+  type(User) *user = unwrap(result) {
     printf("Error getting user: %s\n", result->description);
     return 1;
   }

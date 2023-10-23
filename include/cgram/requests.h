@@ -10,6 +10,7 @@
 typedef struct {
   bool ok;
   cJSON *result;
+  char *description;
 } _cgram_request_response_t;
 
 _cgram_request_response_t _cgram_make_request(cgram_handle_t *handle,
