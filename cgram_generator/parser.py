@@ -1,8 +1,14 @@
 from typing import Any
+from logging import getLogger
 
 from cgram_generator import models
 
+logger = getLogger(__name__)
+
 ctype = models.CGramCType
+
+ARRAY_OF_TEXT = "Array of "
+ARRAY_OF_TEXT_LEN = len(ARRAY_OF_TEXT)
 
 TYPES_TO_CTYPES = {
     "Integer": ctype(name="int64_t", pointer_deepness=0, cgram_type=False),
@@ -13,18 +19,18 @@ TYPES_TO_CTYPES = {
 
 
 def convert_type_to_ctype(type: str) -> ctype:
-    if type.startswith("Array of "):
-        print("Detected array type", type)
-        name = type[len("Array of "):]
+    if type.startswith(ARRAY_OF_TEXT):
+        logger.debug("Detected array type '%s'", type)
+        name = type[ARRAY_OF_TEXT_LEN:]
         actual_type = convert_type_to_ctype(name).model_copy()
         actual_type.pointer_deepness += 1
         return actual_type
 
     if type in TYPES_TO_CTYPES:
-        print("Detected default type", type)
+        logger.debug("Detected default type '%s'", type)
         return TYPES_TO_CTYPES[type]
 
-    print("Detected custom type", type)
+    logger.debug("Detected custom type '%s", type)
     return ctype(name=type, pointer_deepness=1, cgram_type=True)
 
 
@@ -35,7 +41,7 @@ def parse_api(api_spec: dict[str, Any]) -> models.CGramAPI:
         fields: list[models.CGramField] = []
         dependencies: list[str] = []
 
-        print("Processing type", type_name)
+        logger.debug("Processing type '%s'", type_name)
         for field in type_dict.get("fields", []):
             field_name = field["name"]
             field_type = convert_type_to_ctype(field["types"][0])
@@ -46,9 +52,11 @@ def parse_api(api_spec: dict[str, Any]) -> models.CGramAPI:
 
             fields.append(models.CGramField(name=field_name, type=field_type))
 
-        types.append(models.CGramType(
-            name=type_name, dependencies=dependencies, fields=fields
-        ))
+        types.append(
+            models.CGramType(name=type_name, dependencies=dependencies, fields=fields)
+        )
+
+    logger.info("Parsed %d types", len(types))
 
     return models.CGramAPI(
         version=api_spec["version"],
