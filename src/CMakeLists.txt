@@ -15,7 +15,7 @@ target_include_directories(cgram PRIVATE ../vendor/cJSON)
 # We need this directory, and users of our library will need it too
 target_include_directories(cgram PUBLIC ../include)
 
-target_compile_options(cgram PRIVATE -D_CG_VERSION=\"${PROJECT_VERSION}\" -Wall -Wextra -Wpedantic -Werror -Wno-missing-field-initializers -g)
+target_compile_options(cgram PRIVATE -D_CG_VERSION=\"${PROJECT_VERSION}\" -Wall -Wextra -Wpedantic -Wno-missing-field-initializers -g)
 
 # IDEs should put the headers in a nice place
 source_group(

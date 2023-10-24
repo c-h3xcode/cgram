@@ -28,6 +28,6 @@ void cgram_handle_free(cgram_handle_t *handle);
 cgram_error_t cgram_sendMessage(cgram_handle_t *handle, int64_t chat_id,
                                 const char *text);
 
-result(User) *cgram_getMe(cgram_handle_t *handle);
+result(User) * cgram_getMe(cgram_handle_t *handle);
 
 #endif
