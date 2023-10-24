@@ -1,7 +1,7 @@
-file(GLOB HEADER_LIST CONFIGURE_DEPENDS "${cgram_SOURCE_DIR}/include/cgram/**/*.h")
-file(GLOB SOURCE_LIST CONFIGURE_DEPENDS "${cgram_SOURCE_DIR}/src/**/*.c")
+file(GLOB_RECURSE HEADER_LIST "${cgram_SOURCE_DIR}/include/cgram/*.h")
+file(GLOB_RECURSE SOURCE_LIST "${cgram_SOURCE_DIR}/src/*.c")
 
-add_library(cgram SHARED cgram.c http.c params.c requests.c str.c types/User.c ${HEADER_LIST})
+add_library(cgram SHARED ${SOURCE_LIST} ${HEADER_LIST})
 
 # link with curl
 find_package(CURL REQUIRED)
@@ -15,7 +15,7 @@ target_include_directories(cgram PRIVATE ../vendor/cJSON)
 # We need this directory, and users of our library will need it too
 target_include_directories(cgram PUBLIC ../include)
 
-target_compile_options(cgram PRIVATE -D_CG_VERSION=\"${PROJECT_VERSION}\" -Wall -Wextra -Wpedantic -Wno-missing-field-initializers -g)
+target_compile_options(cgram PRIVATE -D_CG_VERSION=\"${PROJECT_VERSION}\" -Wall -Wextra -Wno-missing-field-initializers -Wno-gnu-empty-struct -Wno-unused-parameter)
 
 # IDEs should put the headers in a nice place
 source_group(

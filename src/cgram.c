@@ -16,8 +16,6 @@ cgram_handle_t *cgram_handle_new(const char *token) {
   handle->_curl_easy_handle = curl_easy_init();
   handle->token = malloc(strlen(token) + 1);
   strcpy(handle->token, token);
-
-  _cgram_string_init(&handle->_raw_response);
   _cgram_init_curl_handle(handle);
 
   return handle;
@@ -26,58 +24,5 @@ cgram_handle_t *cgram_handle_new(const char *token) {
 void cgram_handle_free(cgram_handle_t *handle) {
   curl_easy_cleanup(handle->_curl_easy_handle);
   free(handle->token);
-  _cgram_string_free(&handle->_raw_response);
   free(handle);
-}
-
-cgram_error_t cgram_sendMessage(cgram_handle_t *handle, int64_t chat_id,
-                                const char *text) {
-  struct _cgram_params params;
-  _cgram_params_init(&params);
-
-  char *chat_id_str;
-  asprintf(&chat_id_str, "%ld", chat_id);
-
-  _cgram_params_add(&params, "chat_id", chat_id_str);
-  _cgram_params_add(&params, "text", text);
-  _cgram_params_add(&params, "parse_mode", "HTML");
-
-  free(chat_id_str);
-
-  // cgram_error_t result =
-  //     _cgram_make_http_request(handle, "sendMessage", &params);
-
-  _cgram_params_free(&params);
-
-  printf("Response: %s\n", handle->_raw_response.data);
-
-  _cgram_string_clear(&handle->_raw_response);
-  return 0;
-}
-
-result(User) * cgram_getMe(cgram_handle_t *handle) {
-  struct _cgram_params params;
-  _cgram_params_init(&params);
-
-  _cgram_request_response_t response =
-      _cgram_make_request(handle, "getMe", &params);
-
-  _cgram_params_free(&params);
-
-  result(User) *result = malloc(sizeof(result(User)));
-  result->ok = false;
-  result->description = response.description;
-  result->result = NULL;
-
-  if (!response.ok) goto end;
-
-  type(User) *user = cgram_User_parse(response.result);
-
-  if (user == NULL) goto end;
-
-  result->ok = true;
-  result->result = user;
-
-end:
-  return result;
 }

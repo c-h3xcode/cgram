@@ -42,7 +42,7 @@ endif()
 add_subdirectory(src)
 add_subdirectory(cli)
 
-
+option(ENABLE_CJSON_TEST "Enable building cJSON test" OFF)
 add_subdirectory(vendor/cJSON)
 
 if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR MODERN_CMAKE_BUILD_TESTING) AND BUILD_TESTING)

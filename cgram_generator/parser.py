@@ -45,12 +45,17 @@ def parse_api(api_spec: dict[str, Any]) -> models.CGramAPI:
         for field in type_dict.get("fields", []):
             field_name = field["name"]
             field_type = convert_type_to_ctype(field["types"][0])
+            field_required = field["required"]
 
             if field_type.cgram_type:
                 if field_type.name not in dependencies and field_type.name != type_name:
                     dependencies.append(field_type.name)
 
-            fields.append(models.CGramField(name=field_name, type=field_type))
+            fields.append(
+                models.CGramField(
+                    name=field_name, type=field_type, required=field_required
+                )
+            )
 
         types.append(
             models.CGramType(name=type_name, dependencies=dependencies, fields=fields)
