@@ -16,4 +16,13 @@ def check_dependencies(api: models.CGramAPI):
             model.name,
             ", ".join(model.dependencies) or "nothing",
         )
-    logger.info("All dependencies are valid")
+
+    for method in api.methods:
+        for dependency in method.dependencies:
+            if dependency not in registered_types:
+                raise errors.UnknownDependencyError(method.name, dependency)
+        logger.debug(
+            "Method '%s' depends on %s",
+            method.name,
+            ", ".join(method.dependencies) or "nothing",
+        )

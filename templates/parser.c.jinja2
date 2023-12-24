@@ -113,3 +113,44 @@ parse_array_array_func_def({{ type.name }}) {
 
   return {{ type.name|lower }}_array;
 }
+
+
+to_json_func_def({{ type.name }}) {
+  if ({{ type.name|lower }} == NULL) {
+    if (error != NULL && !suppress_error) {
+      error->code = CGRAME_ERROR;
+      error->description = "Expected {{ type.name }} object, got NULL";
+    }
+    return NULL;
+  }
+
+  cJSON *json = cJSON_CreateObject();
+  bool internal_error = false;
+
+  if (error == NULL || suppress_error) {
+    error = malloc(sizeof(cgram_error_t));
+    internal_error = true;
+  }
+
+  {% for field in type.fields %}
+  {% if field.type.cgram_type %}
+  {% if field.type.pointer_deepness == 1 %}
+  cJSON_AddItemToObject(json, "{{ field.name }}", to_json_func({{ field.type.name }})({{ type.name|lower }}->{{ field.name }}, error, {{ "false" if field.required else "true" }}));
+  {% else %}
+  cJSON_AddItemToObject(json, "{{ field.name }}", to_array_json_func({{ field.type.name }})({{ type.name|lower }}->{{ field.name }}, error, {{ "false" if field.required else "true" }}));
+  {% endif %}
+  {% else %}
+  cJSON_AddItemToObject(json, "{{ field.name }}", {{ field.to_json_function }}({{ type.name|lower }}->{{ field.name }}, error, {{ "false" if field.required else "true" }}));
+  {% endif %}
+  {% endfor %}
+
+  if (error->code != CGRAME_ERROR) {
+    error->code = CGRAME_OK;
+  }
+
+  if (internal_error) {
+    free(error);
+  }
+
+  return json;
+}

@@ -13,7 +13,6 @@ _cgram_request_response_t _cgram_make_request(cgram_handle_t* handle,
       _cgram_make_http_request(handle, method, params);
 
   _cgram_request_response_t result;
-  result.ok = true;
   cJSON* parsed_response = cJSON_Parse(response.data.data);
 
   result.ok = false;

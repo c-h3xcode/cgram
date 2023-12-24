@@ -24,11 +24,19 @@ class CGramType(HashableModel):
     fields: list[CGramField]
 
 
+class CGramMethod(HashableModel):
+    name: str
+    dependencies: list[str]
+    returns: CGramCType
+    fields: list[CGramField]
+
+
 class CGramAPI(HashableModel):
     version: str
     release_date: str
     changelog: str
     types: list[CGramType]
+    methods: list[CGramMethod]
 
 
 # -- Parser --
@@ -38,6 +46,7 @@ class CGramParserField(HashableModel):
     name: str
     type: CGramCType
     parser_function: str
+    to_json_function: str
     required: bool
 
 

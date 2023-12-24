@@ -17,6 +17,8 @@ environment = jinja2.Environment(
 )
 type_template = environment.get_template("type.h.jinja2")
 types_file_template = environment.get_template("types.h.jinja2")
+method_template = environment.get_template("method.h.jinja2")
+methods_file_template = environment.get_template("methods.h.jinja2")
 parser_template = environment.get_template("parser.c.jinja2")
 
 TYPES_TO_PARSER_FUNCTIONS: dict[ctype, str] = {
@@ -26,6 +28,15 @@ TYPES_TO_PARSER_FUNCTIONS: dict[ctype, str] = {
     ctype(name="char", pointer_deepness=1): "_cgram_parse_string",  # type: ignore
     ctype(name="char", pointer_deepness=2): "_cgram_parse_string_array",  # type: ignore
     ctype(name="bool"): "_cgram_parse_bool",  # type: ignore
+}
+
+TYPES_TO_JSON_FUNCTIONS: dict[ctype, str] = {
+    ctype(name="int64_t"): "_cgram_to_json_int",  # type: ignore
+    ctype(name="int64_t", pointer_deepness=1): "_cgram_to_json_int_array",  # type: ignore
+    ctype(name="double"): "_cgram_to_json_double",  # type: ignore
+    ctype(name="char", pointer_deepness=1): "_cgram_to_json_string",  # type: ignore
+    ctype(name="char", pointer_deepness=2): "_cgram_to_json_string_array",  # type: ignore
+    ctype(name="bool"): "_cgram_to_json_bool",  # type: ignore
 }
 
 
@@ -39,8 +50,24 @@ def generate_cgram_types(api: models.CGramAPI) -> dict[str, str]:
     return generated
 
 
+def generate_cgram_method(method: models.CGramMethod, api: models.CGramAPI) -> str:
+    return method_template.render(method=method, api=api)
+
+
+def generate_cgram_methods(api: models.CGramAPI) -> dict[str, str]:
+    generated = {
+        method.name: generate_cgram_method(method, api) for method in api.methods
+    }
+    logger.info("Generated %d methods", len(generated))
+    return generated
+
+
 def generate_types_file(api: models.CGramAPI) -> str:
     return types_file_template.render(api=api)
+
+
+def generate_methods_file(api: models.CGramAPI) -> str:
+    return methods_file_template.render(api=api)
 
 
 def generate_cgram_parser(type: models.CGramType, api: models.CGramAPI) -> str:
@@ -50,6 +77,7 @@ def generate_cgram_parser(type: models.CGramType, api: models.CGramAPI) -> str:
     for field in type.fields:
         logger.debug("Processing field '%s'", field.name)
         parser_function = TYPES_TO_PARSER_FUNCTIONS.get(field.type, "")
+        to_json_function = TYPES_TO_JSON_FUNCTIONS.get(field.type, "")
         if not parser_function:
             if not field.type.cgram_type:
                 raise ValueError(f"Cannot find parser function for type '{field.type}'")
@@ -58,6 +86,7 @@ def generate_cgram_parser(type: models.CGramType, api: models.CGramAPI) -> str:
                 name=field.name,
                 type=field.type,
                 parser_function=parser_function,
+                to_json_function=to_json_function,
                 required=field.required,
             )
         )

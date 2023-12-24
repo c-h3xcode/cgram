@@ -9,6 +9,8 @@ from cgram_generator.parser import parse_api
 from cgram_generator.generator import (
     generate_cgram_types,
     generate_types_file,
+    generate_cgram_methods,
+    generate_methods_file,
     generate_cgram_parsers,
 )
 from cgram_generator.checker import check_dependencies
@@ -41,6 +43,8 @@ def main(argv: list[str]) -> int:
     logger.info("Parsing API spec")
     api = parse_api(data)
 
+    # logger.info("Parsed API spec: %s", api.model_dump_json(indent=2))
+
     logger.info("Checking dependencies")
     check_dependencies(api)
 
@@ -49,6 +53,9 @@ def main(argv: list[str]) -> int:
         if not os.path.exists(os.path.join(args.headers_dir, "types")):
             os.makedirs(os.path.join(args.headers_dir, "types"))
 
+        if not os.path.exists(os.path.join(args.headers_dir, "methods")):
+            os.makedirs(os.path.join(args.headers_dir, "methods"))
+
         for type_name, source in generate_cgram_types(api).items():
             with open(
                 os.path.join(args.headers_dir, "types", f"{type_name}.h"), "w"
@@ -56,9 +63,20 @@ def main(argv: list[str]) -> int:
                 logger.debug("Writing type '%s' to file %s", type_name, f.name)
                 f.write(source)
 
+        for method_name, source in generate_cgram_methods(api).items():
+            with open(
+                os.path.join(args.headers_dir, "methods", f"{method_name}.h"), "w"
+            ) as f:
+                logger.debug("Writing method '%s' to file %s", method_name, f.name)
+                f.write(source)
+
         with open(os.path.join(args.headers_dir, "types.h"), "w") as f:
             logger.debug("Writing types.h to file %s", f.name)
             f.write(generate_types_file(api))
+
+        with open(os.path.join(args.headers_dir, "methods.h"), "w") as f:
+            logger.debug("Writing methods.h to file %s", f.name)
+            f.write(generate_methods_file(api))
     else:
         logger.warning("Skipping headers generation")
 

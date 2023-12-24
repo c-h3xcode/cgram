@@ -1,6 +1,7 @@
 #define _GNU_SOURCE
 #include <cgram/params.h>
 #include <curl/curl.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -16,6 +17,30 @@ void _cgram_params_add(struct _cgram_params *params, const char *key,
   params->params[params->length].key = strdup(key);
   params->params[params->length].value = strdup(value);
   params->length++;
+}
+
+void _cgram_params_add_int(struct _cgram_params *params, const char *key,
+                           int value) {
+  char *value_str;
+  asprintf(&value_str, "%d", value);
+  _cgram_params_add(params, key, value_str);
+  free(value_str);
+}
+
+void _cgram_params_add_float(struct _cgram_params *params, const char *key,
+                             float value) {
+  char *value_str;
+  asprintf(&value_str, "%f", value);
+  _cgram_params_add(params, key, value_str);
+  free(value_str);
+}
+
+void _cgram_params_add_bool(struct _cgram_params *params, const char *key,
+                            bool value) {
+  char *value_str;
+  asprintf(&value_str, "%s", value ? "true" : "false");
+  _cgram_params_add(params, key, value_str);
+  free(value_str);
 }
 
 void _cgram_params_free(struct _cgram_params *params) {

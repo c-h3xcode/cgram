@@ -6,7 +6,7 @@
 #include <curl/curl.h>
 #include <string.h>
 
-#define TELEGRAM_API_BASEURL "https://api.telegram.org/bot%s/%s?%s"
+#define TELEGRAM_API_BASEURL "https://api.telegram.org/bot%s/%s"
 
 size_t _cgram_string_write_callback(void *ptr, size_t size, size_t nmemb,
                                     struct _cgram_string *str) {
@@ -30,10 +30,9 @@ void _cgram_init_curl_handle(cgram_handle_t *handle) {
 
 _cgram_http_response_t _cgram_make_http_request(cgram_handle_t *handle,
                                                 char *method,
-                                                struct _cgram_params *params) {
-  char *params_str = _cgram_params_to_string(params);
+                                                cJSON *fields) {
   char *url;
-  asprintf(&url, TELEGRAM_API_BASEURL, handle->token, method, params_str);
+  asprintf(&url, TELEGRAM_API_BASEURL, handle->token, method);
 
   struct _cgram_string response;
   _cgram_string_init(&response);

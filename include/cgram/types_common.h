@@ -44,4 +44,21 @@
   type(T) * **parse_array_array_func(T)(cJSON * json, cgram_error_t * error, \
                                         bool suppress_error)
 
+#define to_json_func(T) cgram_##T##_to_json
+
+#define to_json_func_def(T) \
+  cJSON *to_json_func(T)(type(T) * value, cgram_error_t * error)
+
+#define to_json_array_func(T) cgram_##T##_array_to_json
+
+#define to_json_array_func_def(T) \
+  cJSON *to_json_array_func(T)(type(T) * *value, cgram_error_t * error)
+
+#define to_json_array_array_func(T) cgram_##T##_array_array_to_json
+
+#define to_json_array_array_func_def(T) \
+  cJSON *to_json_array_array_func(T)(type(T) * **value, cgram_error_t * error)
+
+#define free_func(T) cgram_##T##_free
+
 #endif

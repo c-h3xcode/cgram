@@ -1,5 +1,5 @@
-#ifndef CGRAM_PARSER_H
-#define CGRAM_PARSER_H
+#ifndef CGRAM_TO_JSON_H
+#define CGRAM_TO_JSON_H
 
 #include <cJSON.h>
 #include <stdbool.h>
@@ -20,4 +20,6 @@ char **_cgram_parse_string_array(cJSON *json, const char *key,
 bool _cgram_parse_bool(cJSON *json, const char *key, cgram_error_t *error,
                        bool suppress_error);
 
-#endif
+cJSON *_cgram_to_json_int(int64_t value, bool );
+
+#endif  // CGRAM_TO_JSON_H
